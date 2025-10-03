@@ -62,23 +62,17 @@ pipeline {
         }
 
         stage('Security Scan (OWASP DC)') {
-    steps {
-        sh '''
-          mkdir -p dep-report
-          docker run --rm \
-            -v "$PWD":/src -w /src \
-            -v "$PWD/dep-report":/report \
-            -v "$PWD/.dc-data":/usr/share/dependency-check/data \
-            owasp/dependency-check:latest \
-            --project nodeapp \
-            --scan /src \
-            --format JSON \
-            --out /report \
-            --enableExperimental || true
-        '''
-    }
-}
-
+            steps {
+                sh '''
+                  mkdir -p dep-report
+                  docker run --rm \
+                    -v $PWD:/src -w /src \
+                    -v $PWD/dep-report:/report \
+                    owasp/dependency-check:latest \
+                    --project nodeapp --scan /src --format HTML --out /report --enableExperimental || true
+                '''
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
